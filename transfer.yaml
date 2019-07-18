@@ -1,0 +1,63 @@
+swagger: '2.0'
+info:
+  title: Revolut transfer service
+  version: 1.0.0
+  description: The service allows to transfer funds between two accounds
+consumes:
+  - application/json
+produces:
+  - application/json
+host: transfer.revolut.com
+basePath: /
+schemes:
+  - http
+
+paths:
+  /transfer:
+    post:
+      summary: Transfer funds between two accounts
+      description: Creates DEBIT and CREDIT accounts in the corrresponding ledgers. Cancels transactions in case of failures
+      operationId: transfer
+      parameters:
+        - name: from
+          in: query
+          required: true
+          description: The UUID of the source account
+          type: string
+        - name: to
+          in: query
+          required: true
+          description: The UUID of the target account
+          type: string
+        - name: amount
+          in: query
+          required: true
+          description: Amount to transfer, in minor units
+          type: integer
+
+      responses:
+        200:
+          description: Transfer has been succesfully executed
+          schema:
+            description: Successfull response
+            type: object
+            properties:
+              responseCode:
+                type: string
+                description: NO_ERROR
+              msg:
+                type: string
+                description: Empty
+
+        500:
+          description: An error occurred processing this request. Check the response  `code` and `message` for details.
+          schema:
+            description: Error response
+            type: object
+            properties:
+              responseCode:
+                type: string
+                description: A code indicating the cause of the issue.
+              msg:
+                type: string
+                description: A short plain text (English) description of the issue.

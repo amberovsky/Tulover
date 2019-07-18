@@ -1,0 +1,50 @@
+@startuml
+start
+
+note left
+    <b><u>waitingTime</u></b>: maximum time to wait,
+    if lock is already acquired, milliseconds
+
+    <b><u>acquiringTime</u></b>: for how long to
+    acquire lock, milliseconds
+end note
+
+if (lock status is locked?) then (yes)
+    :throw AlreadyLockedException;
+    stop
+else (no)
+    partition Spinlock {
+        while (true?) is (yes)
+            if (Still within waiting time constraints?) then (yes)
+                if (Can acquire the reentrant\nlock on the hashmap within\ntime constraints?) then (yes)
+                    if (Still within waiting time constraints?) then (yes)
+                        if (Have such lock in the HashMap) then (yes)
+                            if (lock has expired?) then (yes)
+                                :acquire lock;
+                            else (no)
+                                :spin 10ms;
+                            endif
+                        else (no)
+                            :create new lock;
+                        endif
+                    else (no)
+                        :return false;
+                        stop
+                    endif
+                else (no)
+                    :return false;
+                    stop
+                endif
+            else (no)
+                :return false;
+                stop
+            endif
+        endwhile
+
+        :set lock status to locked;
+        :return true;
+    }
+endif
+
+stop
+@enduml

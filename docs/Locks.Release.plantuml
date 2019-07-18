@@ -1,0 +1,48 @@
+@startuml
+start
+
+note left
+    <b><u>allowLost</u></b>: in some cases it is fine when we are
+    trying to unlock a lock which already belongs to
+    someone else or expired
+end note
+
+if (lock status is locked?) then (no)
+    if (allowLost?) then (yes)
+    else (no)
+        :throw AlreadyUnlockedException;
+        stop
+    endif
+    stop
+else (yes)
+    partition synchronized {
+        if (Have such lock in the HashMap) then (yes)
+            if (owner is different?) then (yes)
+                if (not __**allowLost**__?) then (yes)
+                    :throw LostLockException;
+                    stop
+                else (no)
+                endif
+            else (no)
+            endif
+
+            if (lock has expired?) then (yes)
+                if (not __**allowLost**__?) then (yes)
+                    :throw ExpiredLockException;
+                    stop
+                else (no)
+                endif
+            else (no)
+            endif
+        else (no)
+            :throw LockDoesNotExistException;
+            stop;
+        endif
+    }
+endif
+
+:set lock status to unlocked;
+:reset lock to the initial state;
+
+stop
+@enduml
