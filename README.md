@@ -45,7 +45,7 @@ Please have a look on [TransferServiceTest](/src/test/java/com/revolut/transfer/
 <a name="api"></a>
 ## API
 
-The API documentation is provided in the [swagger spec](/transfer.yaml) format, or in the [rendered version](/transfer.html).
+The API documentation is provided in the [swagger spec](/transfer.yaml) format.
 It is important to note that all API responses are always in the JSON format with partially "fixed" schema. In case of errors
 a **trace id** (UUIDv4) is provided in the `msg` field which could be used to search for related log messages. See [Logger documentation](#logger) for details
 
